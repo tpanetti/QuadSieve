@@ -3,6 +3,8 @@ import java.util.ArrayList;
 
 public class QuadraticSieve
 {
+	//TODO: import proper tuple
+	
 	private final int SMOOTHNESSBOUND = 1000;
 	
 	public static void main(String[] args)
@@ -27,7 +29,7 @@ public class QuadraticSieve
 					System.out.println(primes.get(i) + " "); */
 	//generate a list that satisfies 
 	ArrayList<Integer> bSmooth = findSmoothness(R, n, 100);
-	
+	ArrayList<Tuple<Integer, Integer>> residues = calcResidue(primes, bSmooth);
 	
 	
 	}
@@ -68,5 +70,7 @@ public class QuadraticSieve
 			Qs.add(Q);
 		}
 	}
+	
+	//public static ArrayList<Tuple<Integer, Integer>> calcResidue(
 
 }
