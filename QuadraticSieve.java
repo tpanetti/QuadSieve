@@ -22,10 +22,11 @@ public class QuadraticSieve
 	//Find R?
 	int R = (int)Math.sqrt(n);	//as long as the sqrt is an integer
 	//generate a list of "Big Roots"
-	ArrayList<Integer> primes = eratosthenesSieve(R);
+	ArrayList<Integer> primes = eratosthenesSieve(n);
+	for(int i = 0; i < primes.size(); i++)
+		System.out.println(primes.get(i) + " ");
 	
 	
-		
 	
 	
 	}
@@ -42,10 +43,14 @@ public class QuadraticSieve
 		//loop
 		while(Math.pow(p, 2) < size)
 		{
-			for(int i = 0; i < primes.size(); i++)
+			for(int i = primes.indexOf(p) + 1; i < primes.size(); i++)
 			{
+				//System.out.println(primes.get(i) +": divided by " + p);
 				if(primes.get(i) % p == 0)
+				{
 					primes.remove(i);
+					
+				}
 			}
 		p++;
 		}
