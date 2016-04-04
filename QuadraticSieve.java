@@ -11,7 +11,7 @@ public class QuadraticSieve
 	int n;
 	//take from command line
 	if(args.length == 1)
-		n = args[0];
+		n = Integer.parseInt(args[0]);
 	//else take from scanner
 	else
 	{
@@ -20,9 +20,9 @@ public class QuadraticSieve
 		n = input.nextInt();
 	}
 	//Find R?
-	int R = Math.sqrt(n);	//as long as the sqrt is an integer
+	int R = (int)Math.sqrt(n);	//as long as the sqrt is an integer
 	//generate a list of "Big Roots"
-	ArrayList<Integer> primes = erathosthenessSieve(R);
+	ArrayList<Integer> primes = eratosthenesSieve(R);
 	
 	
 		
@@ -36,18 +36,18 @@ public class QuadraticSieve
 		ArrayList<Integer> primes = new ArrayList<Integer>();
 		//populate a list with i = 2 to n
 		for(int i = 2; i < size; i++) 
-			primes.append(i);
+			primes.add(i);
 		//set p equal to 2?
 		int p = 2;
 		//loop
-		while(Math.Pow(p, 2) < size)
+		while(Math.pow(p, 2) < size)
 		{
 			for(int i = 0; i < primes.size(); i++)
 			{
 				if(primes.get(i) % p == 0)
 					primes.remove(i);
 			}
-		p++
+		p++;
 		}
 		return primes;
 	}
