@@ -23,9 +23,10 @@ public class QuadraticSieve
 	int R = (int)Math.sqrt(n);	//as long as the sqrt is an integer
 	//generate a list of "Big Roots"
 	ArrayList<Integer> primes = eratosthenesSieve(n);
-	for(int i = 0; i < primes.size(); i++)
-		System.out.println(primes.get(i) + " ");
-	
+				/* for(int i = 0; i < primes.size(); i++)
+					System.out.println(primes.get(i) + " "); */
+	//generate a list that satisfies 
+	ArrayList<Integer> bSmooth = findSmoothness(R, n, 100);
 	
 	
 	
@@ -57,6 +58,15 @@ public class QuadraticSieve
 		return primes;
 	}
 	
-	
+	public static ArrayList<Integer> findSmoothness(int floorN, int factor, int n)
+	{
+		ArrayList<Integer> Qs = new ArrayList<Integer>();
+		for(int i = -n; i <= n; i++) 
+		{
+			//store log of Q possibly
+			int Q = Math.Pow((floorN + n), 2) - factor;
+			Qs.add(Q);
+		}
+	}
 
 }
