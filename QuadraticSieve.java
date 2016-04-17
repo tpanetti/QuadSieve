@@ -57,7 +57,8 @@ public class QuadraticSieve
     ArrayList<Integer> bSmooth = findSmoothness(R, n);
     ArrayList<Integer> residues = calcResiduals(primes, bSmooth);
   
-  
+    //Refactor and Gauss
+    ArrayList<Integer> refactoredResidual = refactor(residues, bSmooth); 
   }
   
           
@@ -145,5 +146,17 @@ public class QuadraticSieve
   return copy;
   
   }
+
+
+  public static ArrayList<ArrayList<<Integer>> refactor(ArrayList<Integer> residues, ArrayList<Integer> original)
+  {
+    return null;
+  }
+
+  public static ArrayList<ArrayList<Integer>> Gauss(ArrayList<Intger
+  {
+    return null;
+  }
+
 
 }
