@@ -12,7 +12,9 @@ public class QuadraticSieve
   //TODO: import proper tuple
 
   private final int SMOOTHNESSBOUND = 1000;
+  //
   private static int offset;
+  private static int[] PRIMES;
   private class Pair<X, Y> 
   {
     public final X x;
@@ -58,7 +60,20 @@ public class QuadraticSieve
     ArrayList<Integer> residues = calcResiduals(primes, bSmooth);
   
     //Refactor and Gauss
-    ArrayList<Integer> refactoredResidual = refactor(residues, bSmooth); 
+    ArrayList<ArrayList<Integer>> refactoredResidual = refactor(residues, bSmooth, primes);
+    ArrayList<ArrayList<Integer>> reducedResidual = reduceModTwo(refactoredResidual);
+    System.out.println("Reduced matrix is: ");
+    int i = 0;
+    for(ArrayList<Integer> list : reducedResidual)
+    {
+      System.out.print(i + " ");
+      System.out.print("[");   
+      for(int j : list)
+        System.out.print(j + ", ");
+      System.out.println("]");
+    i++;
+    }
+    ArrayList<ArrayList<Integer>> gaussReducedMatrix = gauss(reducedResidual);
   }
   
           
@@ -85,6 +100,7 @@ public class QuadraticSieve
       }
     p++;
     }
+    primes.add(0, -1);
     return primes;
   }
   
@@ -114,6 +130,8 @@ public class QuadraticSieve
     int start;
     for(int i : primes)
     {
+    if(i == -1)
+      continue;
     System.out.println("Sieve with " + i);
       for(int j = 0; j < copy.size(); j++)
       {
@@ -148,15 +166,81 @@ public class QuadraticSieve
   }
 
 
-  public static ArrayList<ArrayList<<Integer>> refactor(ArrayList<Integer> residues, ArrayList<Integer> original)
+  public static ArrayList<ArrayList<Integer>> refactor(ArrayList<Integer> residues, ArrayList<Integer> original,
+							ArrayList<Integer> primes)
   {
-    return null;
-  }
+    //initialize arraylist and fill with zero arryalists
+    ArrayList<ArrayList<Integer>> exponents = new ArrayList<ArrayList<Integer>>();
+    for(int i = 0; i < residues.size(); i++)
+    {
+      ArrayList<Integer> exponent = new ArrayList<Integer>();
+      for(int j = 0; j < primes.size(); j++)
+        exponent.add(0);
+      exponents.add(exponent);
+    }
 
-  public static ArrayList<ArrayList<Integer>> Gauss(ArrayList<Intger
-  {
-    return null;
+    for(int i = 0; i < residues.size(); i++)
+    {
+      if(residues.get(i) == 1)
+      {
+	System.out.println("Smooth\t" + (i - offset) + "\t" + i + "\t" + original.get(i));
+        int temp = original.get(i);
+	if(temp < 0)
+	{
+	  temp = temp * -1;
+	  (exponents.get(i)).set(0,1);
+	}
+        for(int pIndex = 1; pIndex < primes.size(); pIndex++) 
+        {
+          while(temp % primes.get(pIndex) == 0)
+	  {
+	    System.out.println("DIVIDE\t" + pIndex +"\t" + primes.get(pIndex) + "\t" + temp);
+	    temp = temp / primes.get(pIndex);
+	    exponents.get(i).set(pIndex, (exponents.get(i).get(pIndex))+1);
+	  }
+	
+	}
+      }
+      System.out.print("[");
+      for(int whatever : exponents.get(i))
+      {
+        System.out.print(whatever +", ");
+      }
+      System.out.println("]");
+    }
+
+
+    return exponents;
   }
+  public static ArrayList<ArrayList<Integer>> reduceModTwo(ArrayList<ArrayList<Integer>> matrix)
+  {
+    
+    for(int i = 0; i < matrix.size(); i++)
+      for(int j = 0; j < matrix.get(i).size(); j++)
+        matrix.get(i).set(j, matrix.get(i).get(j) % 2);
+    return matrix;
+  }
+  public static ArrayList<ArrayList<Integer>> gauss(ArrayList<ArrayList<Integer>> array)
+  {
+    
+    ArrayList<ArrayList<Integer>> gaussReduced = array;
+    for(int i = 12; i < array.size() - 12; i++)
+    {
+      for(int j = i+1; j < array.size() - 12; j++)
+      {
+        for(int index = 0; index < array.get(i).size(); index++)
+        {
+	  if((array.get(i).get(index) + array.get(j).get(index)) % 2 != 0)
+	    break;
+          //BAD CODE
+	  if(index == array.get(i).size() - 1) //THIS MEANS WERE AT THE END
+	    System.out.println("Hit\t" + (i-12) + "\t" + (j-12)); 
+	    
+ 	}
+      } 
+    }
+    return gaussReduced;
+  } 
 
 
 }
