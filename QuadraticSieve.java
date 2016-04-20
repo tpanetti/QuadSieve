@@ -2,7 +2,7 @@ import java.util.Scanner;
 import java.util.ArrayList;
 /*
 **This program will run a quadratic sieve to find
-**some numbers?
+**some numbers? Definitely
 **@author Thomas Panetti & Noemi
 **
 **
