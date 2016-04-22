@@ -1,5 +1,6 @@
 import java.util.Scanner;
 import java.util.ArrayList;
+import java.util.HashSet;
 /*
 **This program will run a quadratic sieve to find
 **some numbers? Definitely
@@ -9,12 +10,13 @@ import java.util.ArrayList;
 */
 public class QuadraticSieve
 {
-  //TODO: import proper tuple
 
   private final int SMOOTHNESSBOUND = 1000;
-  //
+  //DELETE offset (No public vars) 
   private static int offset;
-  private static int[] PRIMES;
+  //This is a private class
+  //to be used as a touple for
+  //saving an ArrayList and it's integer index
   private static class Pair<X, Y> 
   {
     private final X x;
@@ -58,12 +60,15 @@ public class QuadraticSieve
           /* for(int i = 0; i < primes.size(); i++)
             System.out.println(primes.get(i) + " "); */
     //generate a list that satisfies the eqn 
-    ArrayList<Integer> bSmooth = findSmoothness(20, n);
+    ArrayList<Integer> bSmooth = findSmoothness(20, n); //MAGIC NUMBER 20
     ArrayList<Integer> residues = calcResiduals(primes, bSmooth);
   
     //Refactor and Gauss
     ArrayList<Pair<ArrayList<Integer>, Integer>> refactoredResidual = refactor(residues, bSmooth, primes);
+    //reduce the matrix mod 2
     ArrayList<Pair<ArrayList<Integer>, Integer>> reducedResidual = reduceModTwo(refactoredResidual);
+    
+    //print reduced Residual matrix
     System.out.println("Reduced matrix is: ");
     int i = 0;
     for(Pair<ArrayList<Integer>,Integer> pair : reducedResidual)
@@ -75,10 +80,23 @@ public class QuadraticSieve
       System.out.println("]");
     i++;
     }
-    ArrayList<Pair<ArrayList<Integer>, Integer>> gaussReducedMatrix = gauss(reducedResidual);
+    //perform Gauss-Jordan elimination on the matrix
+    ArrayList<ArrayList<Integer>> gaussHits = gauss(reducedResidual);
+    //rebuild equation
+    HashSet<Integer> factors = rebuildEquation(gaussHits, n);
+    System.out.print("The factors are: " );   
+    for(int factor : factors)
+      System.out.print(factor + ", ");
+    
   }
   
-          
+  /**
+  * This method will perform a Sieve to calculate all primes
+  * under the input 
+  *
+  * @param size This is the size to create the array of primes
+  * @return 	An ArrayList of primes under size 
+  */        
   public static ArrayList<Integer> eratosthenesSieve(int size) 
   {
     ArrayList<Integer> primes = new ArrayList<Integer>();
@@ -204,7 +222,7 @@ public class QuadraticSieve
       }
        
       System.out.print("[");
-      for(int whatever : exponents.get(i).getX())
+      for(int whatever : exponents.get(exponents.size() -1).getX())
       {
         System.out.print(whatever +", ");
       }
@@ -238,13 +256,14 @@ public class QuadraticSieve
 
   
   
-  public static ArrayList<Pair<ArrayList<Integer>,Integer>> gauss(ArrayList<Pair<ArrayList<Integer>,Integer>> array)
+  public static ArrayList<ArrayList<Integer>> gauss(ArrayList<Pair<ArrayList<Integer>,Integer>> array)
   {
-    
-    ArrayList<Pair<ArrayList<Integer>,Integer>> gaussReduced = array;
-    for(int i = 12; i < array.size() - 12; i++)
+    System.out.println("Enter Gauss"); 
+    ArrayList<ArrayList<Integer>> gaussHits = new ArrayList<ArrayList<Integer>>();
+    //calc doubles
+    for(int i = 0; i < array.size(); i++)
     {
-      for(int j = i+1; j < array.size() - 12; j++)
+      for(int j = i+1; j < array.size(); j++)
       {
         for(int index = 0; index < array.get(i).getX().size(); index++)
         {
@@ -252,13 +271,103 @@ public class QuadraticSieve
 	    break;
           //BAD CODE
 	  if(index == array.get(i).getX().size() - 1) //THIS MEANS WERE AT THE END
-	    System.out.println("Hit\t" + (i-12) + "\t" + (j-12)); 
-	    
- 	}
+	  {
+            System.out.println("Hit\t" + (i) + "\t" + (j)); 
+ 	    ArrayList<Integer> thisHit = new ArrayList<Integer>();
+            thisHit.add(i);
+            thisHit.add(j);
+            gaussHits.add(thisHit);
+          }
+        }
+  
       } 
     }
-    return gaussReduced;
-  } 
+    //calc triples
+    for(int i = 0; i < array.size(); i++)
+    {
+      for(int j = i+1; j < array.size(); j++)
+      {
+        for(int k = j + 1; k < array.size(); k++)
+        {
+          for(int index = 0; index < array.get(i).getX().size(); index++)
+          {
+	    if((array.get(i).getX().get(index) + array.get(j).getX().get(index) + array.get(k).getX().get(index)) % 2 != 0)
+	      break;
+            //BAD CODE
+	    if(index == array.get(i).getX().size() - 1) //THIS MEANS WERE AT THE END
+	    {
+              System.out.println("Hit\t" + (i) + "\t" + (j) + "\t" + (k)); 
+              ArrayList<Integer> thisHit = new ArrayList<Integer>();
+              thisHit.add(i);
+              thisHit.add(j);
+              thisHit.add(k);
+              gaussHits.add(thisHit);	      
+            }
+  	  }
+        }
+      } 
+    }
+    return gaussHits;
+  }
+  
+  /**
+  * This method will rebuild the equation (x
+  *
+  *
+  *
+  */
+  public static HashSet<Integer> rebuildEquation(ArrayList<ArrayList<Integer>> gaussHits, int bigN)
+  {
+    int R = (int)(Math.sqrt(bigN));
+    HashSet<Integer> factors = new HashSet<Integer>();
+    for(ArrayList<Integer> hit : gaussHits)
+    {
+      int lhs = 1;
+      int rhs = 1;
+      for(int num : hit)
+      {
+        lhs *= Math.pow(R + (num - 20), 2);
+        rhs *= Math.pow(R + (num - 20), 2) - bigN;
+      }
+      int x = (int)(Math.sqrt(Math.abs(lhs)));
+      int y = (int)(Math.sqrt(Math.abs(rhs)));
+      if(x == y)
+        continue;
+      int factor1 = (int)(gcd(bigN, (x+y)));
+      int factor2 = (int)(gcd(bigN, (x-y)));
+      System.out.print("Hit\t[");
+      for(int number : hit)
+      	System.out.print(number + ", "); 
+      System.out.println("]\n LHS: " + lhs + ".\t RHS: " + rhs);
+      System.out.println("X: " + x + "\tY: " + y);
+      System.out.println("gcd(" + bigN +", " + (x+y) +": " + factor1 +
+                         "\ngcd(" + bigN + ", " + (x-y) + ": " + factor2);
+      factors.add(factor1);
+      factors.add(factor2);
+    }
+      
+    return factors;
+  }
+  
+  /**
+  * This method will run the euclidean algorithm to
+  * factor two integer into their greatest common denominator
+  *
+  *@param a 	An integer to be reduced
+  *@param b 	An integer to be reduced
+  *@return	The greatest common denominator between a and b
+  */
+  public static int gcd(int a, int b)
+  {
+    while(b != 0)
+    {
+      int t = b;
+      b = a % b;
+      a = t;
+    }
+    return a;
+  }
+
 
 
 }
