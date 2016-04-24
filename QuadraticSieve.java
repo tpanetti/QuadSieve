@@ -8,6 +8,11 @@ import java.util.HashSet;
 **
 **
 */
+ 
+  //Numbers that work
+  //1037, 100, 15, 45
+  //Numbers that don't work
+  //most, 437, 1147, 2491 
 public class QuadraticSieve
 {
 
