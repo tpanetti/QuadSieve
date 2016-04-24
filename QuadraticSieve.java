@@ -13,7 +13,7 @@ public class QuadraticSieve
 
   private final int SMOOTHNESSBOUND = 1000;
   //DELETE offset (No public vars) 
-  private static int offset;
+  private static long offset;
   //This is a private class
   //to be used as a touple for
   //saving an ArrayList and it's integer index
@@ -34,25 +34,25 @@ public class QuadraticSieve
   public static void main(String[] args)
   {
     //Grab number N
-    int n;
-    int factorbase;
+    long n;
+    long factorbase;
     //take from command line
     if(args.length == 2)
     {
-      n = Integer.parseInt(args[0]);
-      factorbase = Integer.parseInt(args[1]);
+      n = Long.parseLong(args[0]);
+      factorbase = Long.parseLong(args[1]);
     } 
     //else take from scanner
     else
     {
       Scanner input = new Scanner(System.in);
       System.out.println("Enter an N: ");
-      n = input.nextInt();
-      factorbase = input.nextInt();
+      n = input.nextLong();
+      factorbase = input.nextLong();
     }
     
     //Find R?
-    int R = (int)Math.sqrt(n);  //as long as the sqrt is an integer
+    long R = (long)Math.sqrt(n);  //as long as the sqrt is an integer
     										offset = R; //DELETE PROBABLY
 
     //generate a list of "Big Roots"
@@ -60,11 +60,11 @@ public class QuadraticSieve
           /* for(int i = 0; i < primes.size(); i++)
             System.out.println(primes.get(i) + " "); */
     //generate a list that satisfies the eqn 
-    ArrayList<Integer> bSmooth = findSmoothness(20, n); //MAGIC NUMBER 20
-    ArrayList<Integer> residues = calcResiduals(primes, bSmooth);
+    ArrayList<Long> bSmooth = findSmoothness(20, n); //MAGIC NUMBER 20
+    ArrayList<Long> residues = calcResiduals(primes, bSmooth);
   
     //Refactor and Gauss
-    ArrayList<Pair<ArrayList<Integer>, Integer>> refactoredResidual = refactor(residues, bSmooth, primes);
+    ArrayList<Pair<ArrayList<Long>, Integer>> refactoredResidual = refactor(residues, bSmooth, primes);
     //reduce the matrix mod 2
     ArrayList<Pair<ArrayList<Integer>, Integer>> reducedResidual = reduceModTwo(refactoredResidual);
     
@@ -75,7 +75,7 @@ public class QuadraticSieve
     {
       System.out.print(i + " ");
       System.out.print("[");   
-      for(int j : pair.getX())
+      for(long j : pair.getX())
         System.out.print(j + ", ");
       System.out.println("]");
     i++;
@@ -83,9 +83,9 @@ public class QuadraticSieve
     //perform Gauss-Jordan elimination on the matrix
     ArrayList<ArrayList<Integer>> gaussHits = gauss(reducedResidual);
     //rebuild equation
-    HashSet<Integer> factors = rebuildEquation(gaussHits, n);
+    HashSet<Long> factors = rebuildEquation(gaussHits, n);
     System.out.print("The factors are: " );   
-    for(int factor : factors)
+    for(long factor : factors)
       System.out.print(factor + ", ");
     
   }
@@ -97,7 +97,7 @@ public class QuadraticSieve
   * @param size This is the size to create the array of primes
   * @return 	An ArrayList of primes under size 
   */        
-  public static ArrayList<Integer> eratosthenesSieve(int size) 
+  public static ArrayList<Integer> eratosthenesSieve(long size) 
   {
     ArrayList<Integer> primes = new ArrayList<Integer>();
     //populate a list with i = 2 to n
@@ -124,30 +124,30 @@ public class QuadraticSieve
     return primes;
   }
   
-  public static ArrayList<Integer> findSmoothness(int range, int numToFactor)
+  public static ArrayList<Long> findSmoothness(long range, long numToFactor)
   {
     //Offset = R. Change later
-    ArrayList<Integer> Qs = new ArrayList<Integer>();
+    ArrayList<Long> Qs = new ArrayList<Long>();
     System.out.println("Root is " +offset + "\tindex\t" + "(r+n)^2\t" + "(r+n)^2 - N)");
-    for(int i = -range; i <= range; i++) 
+    for(long i = -range; i <= range; i++) 
     {
       //store log of Q possibly
-      int Q = ((int)(Math.pow((offset + i), 2)));
+      long Q = ((long)(Math.pow((offset + i), 2)));
        
-      int save = Q - numToFactor;
+      long save = Q - numToFactor;
       Qs.add(save);
       System.out.println(i +"\t" + (Qs.size() - 1) + "\t" + Q + "\t" + save);
     }
   return Qs;
   }
   
-  public static ArrayList<Integer> calcResiduals(ArrayList<Integer> primes, ArrayList<Integer> smoothlist)
+  public static ArrayList<Long> calcResiduals(ArrayList<Integer> primes, ArrayList<Long> smoothlist)
   {
     //ArrayList<Pair<Integer, Integer>> residuals = new ArrayList<Pair<Integer,Integer>>();
 
-    ArrayList<Integer> copy = new ArrayList<Integer>();
+    ArrayList<Long> copy = new ArrayList<Long>();
       System.out.println("Size of smoothlist should be 41, size is: " + smoothlist.size());
-    for(int i : smoothlist)
+    for(long i : smoothlist)
       copy.add(i);
     int start;
     for(int i : primes)
@@ -162,7 +162,7 @@ public class QuadraticSieve
           start = j;
           int index = j;
           do{ 
-            int temp = copy.get(j);
+            long temp = copy.get(j);
             while(temp % i == 0)
             {
               System.out.println("Divide\t" + i + "\t " + (j-20) + "\t" + temp + "\t" + (temp / i));//MAGIC NUMBER
@@ -174,7 +174,7 @@ public class QuadraticSieve
 	}  
       }
       System.out.print("Array [");
-      for(int num : copy)
+      for(long num : copy)
       {
         System.out.print(num + ", "); 
       }
@@ -188,25 +188,26 @@ public class QuadraticSieve
   }
 
 
-  public static ArrayList<Pair<ArrayList<Integer>,Integer>> refactor(ArrayList<Integer> residues, ArrayList<Integer> original,
+  public static ArrayList<Pair<ArrayList<Long>,Integer>> refactor(ArrayList<Long> residues, ArrayList<Long> original,
 							ArrayList<Integer> primes)
   {
     //initialize arraylist and fill with zero arryalists
-    ArrayList<Pair<ArrayList<Integer>, Integer>> exponents = new ArrayList<Pair<ArrayList<Integer>, Integer>>();
-
+    ArrayList<Pair<ArrayList<Long>, Integer>> exponents = new ArrayList<Pair<ArrayList<Long>, Integer>>();
+    //cheating
+    long zero = 0;
     for(int i = 0; i < residues.size(); i++)
     {
       if(residues.get(i) == 1)
       {
-        ArrayList<Integer> exponent = new ArrayList<Integer>();
+        ArrayList<Long> exponent = new ArrayList<Long>();
         for(int index = 0; index < primes.size(); index++)
-          exponent.add(0);
+          exponent.add(zero);
 	System.out.println("Smooth\t" + (i - 20) + "\t" + i + "\t" + original.get(i)); //MAGIC NUMBER
-        int temp = original.get(i);
+        long temp = original.get(i);
 	if(temp < 0)
 	{
 	  temp = temp * -1;
-	  exponent.set(0,1);
+	  exponent.set(0,new Long(1));
 	}
         for(int pIndex = 1; pIndex < primes.size(); pIndex++) //pIndex set to one to skip -1 
         {
@@ -218,11 +219,11 @@ public class QuadraticSieve
 	  }
 	
 	}
-        exponents.add(new Pair<ArrayList<Integer>, Integer>(exponent, i));
+        exponents.add(new Pair<ArrayList<Long>, Integer>(exponent, i));
       }
        
       System.out.print("[");
-      for(int whatever : exponents.get(exponents.size() -1).getX())
+      for(long whatever : exponents.get(exponents.size() -1).getX())
       {
         System.out.print(whatever +", ");
       }
@@ -232,10 +233,11 @@ public class QuadraticSieve
 
     return exponents;
   }
-  public static ArrayList<Pair<ArrayList<Integer>, Integer>> reduceModTwo(ArrayList<Pair<ArrayList<Integer>, Integer>> matrix)
+  public static ArrayList<Pair<ArrayList<Integer>, Integer>> reduceModTwo(ArrayList<Pair<ArrayList<Long>, Integer>> matrix)
   {
    //TODO Print out before and after reduction
    //smooth -1 19 is wrong double check  
+    ArrayList<Pair<ArrayList<Integer>, Integer>> modTwo = new ArrayList<Pair<ArrayList<Integer>, Integer>>();
     for(int i = 0; i < matrix.size(); i++)
     {
       System.out.print("Row: " + i + "\t[");  
@@ -247,18 +249,88 @@ public class QuadraticSieve
   
       }
       System.out.print("]\nReduced\t[");
-      for(int temp : matrix.get(i).getX())
+      for(long temp : matrix.get(i).getX())
         System.out.print(temp + ", ");
       System.out.println("]");
      }
-     return matrix;
+     for(Pair<ArrayList<Long>, Integer> pair : matrix)
+     {
+       ArrayList<Integer> ints = new ArrayList<Integer>();
+       for(long number : pair.getX())
+         ints.add((int)number); 
+       modTwo.add(new Pair<ArrayList<Integer>, Integer>(ints, pair.getY()));
+     }
+     return modTwo;
   }
 
   
   
   public static ArrayList<ArrayList<Integer>> gauss(ArrayList<Pair<ArrayList<Integer>,Integer>> array)
   {
-    System.out.println("Enter Gauss"); 
+    ArrayList<Pair<ArrayList<Integer>, ArrayList<Integer>> reducedMatrix = new ArrayList<Pair<ArrayList<Integer>, ArrayList<Integer>>();
+    //initialize ArrayList
+    for(int i = 0; i < array.size(); i++)
+    {
+      ArrayList<Integer> rowReductions = new ArrayList<Integer>();
+      //first value in the index is the original index of said row
+      rowReductions.add(array.get(i).getY());
+      reducedMatrix.add(new Pair<ArrayList<Integer>, ArrayList<Integer>>(array.get(i).getX(), rowReductions));
+    }
+    int j = 0;
+    for(int i = 0; i < reducedMatrix.size(); i++)
+    {
+      if(reducedMatrix.get(i).getX().get(j) == 0)
+      {
+        //index of the next row that has a 1 to swap for the zero
+        int oneRow;
+        for(oneRow = i + 1; oneRow < reducedMatrix.size(); oneRow++)
+          if(reducedMatrix.get(i).getX().get(oneRow) == 1)
+            break;
+        //if it's not equal to the size, we did find a 1
+        if(oneRow != reducedMatrix.size())
+        {  //one found, swap rows
+          Pair<ArrayList<Integer>, ArrayList<Integer>> temp = reducedMatrix.get(i);
+          reducedMatrix.set(i, reducedMatrix.get(oneRow));
+          reducedMatrix.set(oneRow, temp);
+        }
+        //else move to the next column
+        else
+        {
+          i--;
+          continue;
+        }
+      }
+      
+      //else we have 1, zero out the column
+      for(int row = i + 1; row < reducedMatrix.size(); row++)
+      {
+        if(reducedMatrix.get(row).getX().get(i) == 0)
+          continue;
+        reducedMatrix.get(row).getX().set(i,0);
+        reducedMatrix.get(row).getY().add(i);
+      }
+      
+      j++;
+    }
+
+    ArrayList<ArrayList<Integer>> zeroSums = new ArrayList<ArrayList<Integer>>(); 
+
+    for(int i = 0; i < reducedMatrix.size(); i++)
+    {
+      for(j = 0; j < reducedMatrix.size(); j++)
+      {
+        if(reducedMatrix.get(i).getX().get(j) != 0)
+        { 
+          //break out of the loop by ending condition
+          j = reducedMatrix.size();
+          continue;
+        }
+      }
+      zeroSums.add(reducedMatrix.get(i).getY());
+    }  
+    return zeroSums;   
+    //Old way
+    /*System.out.println("Enter Gauss"); 
     ArrayList<ArrayList<Integer>> gaussHits = new ArrayList<ArrayList<Integer>>();
     //calc doubles
     for(int i = 0; i < array.size(); i++)
@@ -308,6 +380,8 @@ public class QuadraticSieve
       } 
     }
     return gaussHits;
+    */
+    return null;
   }
   
   /**
@@ -316,10 +390,10 @@ public class QuadraticSieve
   *
   *
   */
-  public static HashSet<Integer> rebuildEquation(ArrayList<ArrayList<Integer>> gaussHits, int bigN)
+  public static HashSet<Long> rebuildEquation(ArrayList<ArrayList<Integer>> gaussHits, long bigN)
   {
     int R = (int)(Math.sqrt(bigN));
-    HashSet<Integer> factors = new HashSet<Integer>();
+    HashSet<Long> factors = new HashSet<Long>();
     for(ArrayList<Integer> hit : gaussHits)
     {
       int lhs = 1;
@@ -329,14 +403,14 @@ public class QuadraticSieve
         lhs *= Math.pow(R + (num - 20), 2);
         rhs *= Math.pow(R + (num - 20), 2) - bigN;
       }
-      int x = (int)(Math.sqrt(Math.abs(lhs)));
-      int y = (int)(Math.sqrt(Math.abs(rhs)));
+      long x = (long)(Math.sqrt(Math.abs(lhs)));
+      long y = (long)(Math.sqrt(Math.abs(rhs)));
       if(x == y)
         continue;
-      int factor1 = (int)(gcd(bigN, (x+y)));
-      int factor2 = (int)(gcd(bigN, (x-y)));
+      long factor1 = (gcd(bigN, (x+y)));
+      long factor2 = (gcd(bigN, (x-y)));
       System.out.print("Hit\t[");
-      for(int number : hit)
+      for(long number : hit)
       	System.out.print(number + ", "); 
       System.out.println("]\n LHS: " + lhs + ".\t RHS: " + rhs);
       System.out.println("X: " + x + "\tY: " + y);
@@ -357,11 +431,11 @@ public class QuadraticSieve
   *@param b 	An integer to be reduced
   *@return	The greatest common denominator between a and b
   */
-  public static int gcd(int a, int b)
+  public static long gcd(long a, long b)
   {
     while(b != 0)
     {
-      int t = b;
+      long t = b;
       b = a % b;
       a = t;
     }
