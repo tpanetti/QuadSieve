@@ -171,7 +171,7 @@ public class QuadraticSieve
             while(temp != 0 && temp % i == 0)
             {
               System.out.println("Temp: " + temp + "\ti: " + i + "temp % i = " + (temp%i));
-              System.out.println("Divide\t" + i + "\t " + (j-BUELLOFFSET) + "\t " + temp + "\t" + (temp / i));//MAGIC NUMBER
+              System.out.println("Divide\t" + i + "\t " + (j-(smoothlist.size()/2)) + "\t " + temp + "\t" + (temp / i));//MAGIC NUMBER
               temp = temp / i;
             }
             copy.set(j, temp);
@@ -208,7 +208,7 @@ public class QuadraticSieve
         ArrayList<Long> exponent = new ArrayList<Long>();
         for(int index = 0; index < primes.size(); index++)
           exponent.add(zero);
-	System.out.println("Smooth\t" + (i - BUELLOFFSET) + "\t" + i + "\t" + original.get(i)); //MAGIC NUMBER
+	System.out.println("Smooth\t" + (i - (original.size()/2)) + "\t" + i + "\t" + original.get(i)); //MAGIC NUMBER
         long temp = original.get(i);
 	if(temp < 0)
 	{
@@ -442,8 +442,18 @@ public class QuadraticSieve
         factors.add(Math.abs(bigN/factor1));
       if(bigN % factor2 == 0)
         factors.add(Math.abs(bigN/factor2));
+      factors = completeFactors(factors);
     }
       
+    return factors;
+  }
+  
+  public static HashSet<Long> completeFactors(HashSet<Long> factors) 
+  {
+    for(long fact : factors)
+      for(long fact2 : factors)
+        if(fact > fact2 && fact % fact2 == 0)
+          factors.add(fact / fact2);
     return factors;
   }
   
