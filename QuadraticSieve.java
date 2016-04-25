@@ -15,7 +15,7 @@ import java.util.HashSet;
   //most, 437, 1147, 2491 
 public class QuadraticSieve
 {
-
+  private static final int BUELLOFFSET = 10;
   //private final int SMOOTHNESSBOUND = 1000;
   //DELETE offset (No public vars) 
   //private static long offset;
@@ -64,7 +64,7 @@ public class QuadraticSieve
            for(int i = 0; i < primes.size(); i++)
             System.out.println(primes.get(i) + " "); 
     //generate a list that satisfies the eqn 
-    ArrayList<Long> bSmooth = findSmoothness(20, n); //MAGIC NUMBER 20
+    ArrayList<Long> bSmooth = findSmoothness(R, n); //MAGIC NUMBER 20
     ArrayList<Long> residues = calcResiduals(primes, bSmooth);
   
     //Refactor and Gauss
@@ -78,7 +78,7 @@ public class QuadraticSieve
     for(Pair<ArrayList<Integer>,Integer> pair : reducedResidual)
     {
       System.out.print(i + " ");
-      System.out.print("[");   
+      System.out.print("[");
       for(long j : pair.getX())
         System.out.print(j + ", ");
       System.out.println("]");
@@ -171,7 +171,7 @@ public class QuadraticSieve
             while(temp != 0 && temp % i == 0)
             {
               System.out.println("Temp: " + temp + "\ti: " + i + "temp % i = " + (temp%i));
-              System.out.println("Divide\t" + i + "\t " + (j-20) + "\t " + temp + "\t" + (temp / i));//MAGIC NUMBER
+              System.out.println("Divide\t" + i + "\t " + (j-BUELLOFFSET) + "\t " + temp + "\t" + (temp / i));//MAGIC NUMBER
               temp = temp / i;
             }
             copy.set(j, temp);
@@ -208,7 +208,7 @@ public class QuadraticSieve
         ArrayList<Long> exponent = new ArrayList<Long>();
         for(int index = 0; index < primes.size(); index++)
           exponent.add(zero);
-	System.out.println("Smooth\t" + (i - 20) + "\t" + i + "\t" + original.get(i)); //MAGIC NUMBER
+	System.out.println("Smooth\t" + (i - BUELLOFFSET) + "\t" + i + "\t" + original.get(i)); //MAGIC NUMBER
         long temp = original.get(i);
 	if(temp < 0)
 	{
@@ -418,8 +418,8 @@ public class QuadraticSieve
       int rhs = 1;
       for(int num = 1; num < hit.size(); num++)
       {
-        lhs *= Math.pow(R + (hit.get(num) - 20), 2);
-        rhs *= Math.pow(R + (hit.get(num) - 20), 2) - bigN;
+        lhs *= Math.pow(R + (hit.get(num) - BUELLOFFSET), 2);
+        rhs *= Math.pow(R + (hit.get(num) - BUELLOFFSET), 2) - bigN;
       }
       long x = (long)(Math.sqrt(Math.abs(lhs)));
       long y = (long)(Math.sqrt(Math.abs(rhs)));
