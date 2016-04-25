@@ -16,9 +16,9 @@ import java.util.HashSet;
 public class QuadraticSieve
 {
 
-  private final int SMOOTHNESSBOUND = 1000;
+  //private final int SMOOTHNESSBOUND = 1000;
   //DELETE offset (No public vars) 
-  private static long offset;
+  //private static long offset;
   //This is a private class
   //to be used as a touple for
   //saving an ArrayList and it's integer index
@@ -58,7 +58,6 @@ public class QuadraticSieve
     
     //Find R?
     long R = (long)Math.sqrt(n);  //as long as the sqrt is an integer
-    										offset = R; //DELETE PROBABLY
 
     //generate a list of "Big Roots"
     ArrayList<Integer> primes = eratosthenesSieve(factorbase);
@@ -134,11 +133,11 @@ public class QuadraticSieve
   {
     //Offset = R. Change later
     ArrayList<Long> Qs = new ArrayList<Long>();
-    System.out.println("Root is " +offset + "\tindex\t" + "(r+n)^2\t" + "(r+n)^2 - N)");
+    System.out.println("Root is " + Math.sqrt(numToFactor) + "\tindex\t" + "(r+n)^2\t" + "(r+n)^2 - N)");
     for(long i = -range; i <= range; i++) 
     {
       //store log of Q possibly
-      long Q = ((long)(Math.pow((offset + i), 2)));
+      long Q = ((long)(Math.pow((Math.sqrt(numToFactor) + i), 2)));
        
       long save = Q - numToFactor;
       Qs.add(save);
@@ -438,6 +437,11 @@ public class QuadraticSieve
       
       factors.add(Math.abs(factor1));
       factors.add(Math.abs(factor2));
+      //check if the factors make other factors!
+      if(bigN % factor1 == 0)
+        factors.add(Math.abs(bigN/factor1));
+      if(bigN % factor2 == 0)
+        factors.add(Math.abs(bigN/factor2));
     }
       
     return factors;
