@@ -348,58 +348,6 @@ public class QuadraticSieve
       zeroSums.add(reducedMatrix.get(i).getY());
     }  
     return zeroSums;   
-    //Old way
-    /*System.out.println("Enter Gauss"); 
-    ArrayList<ArrayList<Integer>> gaussHits = new ArrayList<ArrayList<Integer>>();
-    //calc doubles
-    for(int i = 0; i < array.size(); i++)
-    {
-      for(int j = i+1; j < array.size(); j++)
-      {
-        for(int index = 0; index < array.get(i).getX().size(); index++)
-        {
-	  if((array.get(i).getX().get(index) + array.get(j).getX().get(index)) % 2 != 0)
-	    break;
-          //BAD CODE
-	  if(index == array.get(i).getX().size() - 1) //THIS MEANS WERE AT THE END
-	  {
-            System.out.println("Hit\t" + (i) + "\t" + (j)); 
- 	    ArrayList<Integer> thisHit = new ArrayList<Integer>();
-            thisHit.add(i);
-            thisHit.add(j);
-            gaussHits.add(thisHit);
-          }
-        }
-  
-      } 
-    }
-    //calc triples
-    for(int i = 0; i < array.size(); i++)
-    {
-      for(int j = i+1; j < array.size(); j++)
-      {
-        for(int k = j + 1; k < array.size(); k++)
-        {
-          for(int index = 0; index < array.get(i).getX().size(); index++)
-          {
-	    if((array.get(i).getX().get(index) + array.get(j).getX().get(index) + array.get(k).getX().get(index)) % 2 != 0)
-	      break;
-            //BAD CODE
-	    if(index == array.get(i).getX().size() - 1) //THIS MEANS WERE AT THE END
-	    {
-              System.out.println("Hit\t" + (i) + "\t" + (j) + "\t" + (k)); 
-              ArrayList<Integer> thisHit = new ArrayList<Integer>();
-              thisHit.add(i);
-              thisHit.add(j);
-              thisHit.add(k);
-              gaussHits.add(thisHit);	      
-            }
-  	  }
-        }
-      } 
-    }
-    return gaussHits;
-    */
   }
   
   /**
@@ -418,8 +366,8 @@ public class QuadraticSieve
       int rhs = 1;
       for(int num = 1; num < hit.size(); num++)
       {
-        lhs *= Math.pow(R + (hit.get(num) - BUELLOFFSET), 2);
-        rhs *= Math.pow(R + (hit.get(num) - BUELLOFFSET), 2) - bigN;
+        lhs *= Math.pow(R + (hit.get(num)- R), 2);
+        rhs *= Math.pow(R + (hit.get(num) - R), 2) - bigN;
       }
       long x = (long)(Math.sqrt(Math.abs(lhs)));
       long y = (long)(Math.sqrt(Math.abs(rhs)));
@@ -442,7 +390,8 @@ public class QuadraticSieve
         factors.add(Math.abs(bigN/factor1));
       if(bigN % factor2 == 0)
         factors.add(Math.abs(bigN/factor2));
-      factors = completeFactors(factors);
+       if(factors.size() > 1)
+         factors = completeFactors(factors);
     }
       
     return factors;
@@ -450,11 +399,14 @@ public class QuadraticSieve
   
   public static HashSet<Long> completeFactors(HashSet<Long> factors) 
   {
+    HashSet<Long> newFactors = new HashSet<Long>();
+    for(long fact : factors)
+      newFactors.add(fact);
     for(long fact : factors)
       for(long fact2 : factors)
         if(fact > fact2 && fact % fact2 == 0)
-          factors.add(fact / fact2);
-    return factors;
+          newFactors.add(fact / fact2);
+    return newFactors;
   }
   
   /**
