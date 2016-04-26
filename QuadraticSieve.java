@@ -14,6 +14,7 @@ public class QuadraticSieve
   //This is a private class
   //to be used as a touple for
   //saving an ArrayList and it's integer index
+  private static final int REDUCERANGE = 16;
   private static class Pair<X, Y> 
   {
     private final X x;
@@ -45,6 +46,7 @@ public class QuadraticSieve
       Scanner input = new Scanner(System.in);
       System.out.println("Enter an N: ");
       n = input.nextLong();
+	  System.out.println("Enter a factorbase: ");
       factorbase = input.nextLong();
     }
     
@@ -53,10 +55,10 @@ public class QuadraticSieve
 
     //generate a list of primes up to factorbase
     ArrayList<Integer> primes = eratosthenesSieve(factorbase);
-           for(int i = 0; i < primes.size(); i++)
-            System.out.println(primes.get(i) + " "); 
+           //for(int i = 0; i < primes.size(); i++)
+            //System.out.println(primes.get(i) + " "); 
     //generate a list that satisfies the eqn 
-    ArrayList<Long> bSmooth = findSmoothness(R, n);
+    ArrayList<Long> bSmooth = findSmoothness(R/REDUCERANGE, n);
     ArrayList<Long> residues = calcResiduals(primes, bSmooth);
   
     //Refactor and Gauss
@@ -65,17 +67,17 @@ public class QuadraticSieve
     ArrayList<Pair<ArrayList<Integer>, Integer>> reducedResidual = reduceModTwo(refactoredResidual);
     
     //print reduced residual matrix
-    System.out.println("Reduced matrix is: ");
-    int i = 0;
-    for(Pair<ArrayList<Integer>,Integer> pair : reducedResidual)
-    {
-      System.out.print(i + " ");
-      System.out.print("[");
-      for(long j : pair.getX())
-        System.out.print(j + ", ");
-      System.out.println("]");
-    i++;
-    }
+    //System.out.println("Reduced matrix is: ");
+    //int i = 0;
+    //for(Pair<ArrayList<Integer>,Integer> pair : reducedResidual)
+    //{
+      //System.out.print(i + " ");
+      //System.out.print("[");
+      //for(long j : pair.getX())
+        //System.out.print(j + ", ");
+      //System.out.println("]");
+    //i++;
+    //}
     //perform Gauss-Jordan elimination on the matrix
     //build list of hits I.E. (Index, r1, r2, r3, etc)
     ArrayList<ArrayList<Integer>> gaussHits = gauss(reducedResidual);
@@ -108,7 +110,7 @@ public class QuadraticSieve
     {
       for(int i = primes.indexOf(p) + 1; i < primes.size(); i++)
       {
-        //System.out.println(primes.get(i) +": divided by " + p);
+        ////System.out.println(primes.get(i) +": divided by " + p);
         if(primes.get(i) % p == 0)
         {
           primes.remove(i);
@@ -125,7 +127,7 @@ public class QuadraticSieve
   {
     //Offset = R. Change later
     ArrayList<Long> Qs = new ArrayList<Long>();
-    System.out.println("Root is " + Math.sqrt(numToFactor) + "\tindex\t" + "(r+n)^2\t" + "(r+n)^2 - N)");
+    //System.out.println("Root is " + Math.sqrt(numToFactor) + "\tindex\t" + "(r+n)^2\t" + "(r+n)^2 - N)");
     for(long i = -range; i <= range; i++) 
     {
       //store log of Q possibly
@@ -133,7 +135,7 @@ public class QuadraticSieve
        
       long save = Q - numToFactor;
       Qs.add(save);
-      System.out.println(i +"\t" + (Qs.size() - 1) + "\t" + Q + "\t" + save);
+      //System.out.println(i +"\t" + (Qs.size() - 1) + "\t" + Q + "\t" + save);
     }
   return Qs;
   }
@@ -150,7 +152,7 @@ public class QuadraticSieve
     {
     if(i == -1)
       continue;
-    System.out.println("Sieve with " + i);
+    //System.out.println("Sieve with " + i);
       for(int j = 0; j < copy.size(); j++)
       {
         if(copy.get(j) % i == 0)
@@ -161,8 +163,8 @@ public class QuadraticSieve
             long temp = copy.get(j);
             while(temp != 0 && temp % i == 0)
             {
-              System.out.println("Temp: " + temp + "\ti: " + i + "temp % i = " + (temp%i));
-              System.out.println("Divide\t" + i + "\t " + (j-(smoothlist.size()/2)) + "\t " + temp + "\t" + (temp / i));
+              //System.out.println("Temp: " + temp + "\ti: " + i + "temp % i = " + (temp%i));
+              //System.out.println("Divide\t" + i + "\t " + (j-(smoothlist.size()/2)) + "\t " + temp + "\t" + (temp / i));
               temp = temp / i;
             }
             copy.set(j, temp);
@@ -170,12 +172,12 @@ public class QuadraticSieve
           } while(j != start);
 	}  
       }
-      System.out.print("Array [");
-      for(long num : copy)
+      //System.out.print("Array [");
+      /* for(long num : copy)
       {
-        System.out.print(num + ", "); 
-      }
-      System.out.println("]");
+        //System.out.print(num + ", "); 
+      } */
+      //System.out.println("]");
     }
   //Take abs value of the array
   for(int i = 0; i < copy.size(); i++)
@@ -199,7 +201,7 @@ public class QuadraticSieve
         ArrayList<Long> exponent = new ArrayList<Long>();
         for(int index = 0; index < primes.size(); index++)
           exponent.add(zero);
-	System.out.println("Smooth\t" + (i - (original.size()/2)) + "\t" + i + "\t" + original.get(i));
+	//System.out.println("Smooth\t" + (i - (original.size()/2)) + "\t" + i + "\t" + original.get(i));
         long temp = original.get(i);
 	if(temp < 0)
 	{
@@ -210,7 +212,7 @@ public class QuadraticSieve
         {
           while(temp % primes.get(pIndex) == 0)
 	        {
-	          System.out.println("DIVIDE\t" + pIndex +"\t" + primes.get(pIndex) + "\t" + temp);
+	          //System.out.println("DIVIDE\t" + pIndex +"\t" + primes.get(pIndex) + "\t" + temp);
 	          temp = temp / primes.get(pIndex);
 	          exponent.set(pIndex, (exponent.get(pIndex))+1);
 	        }
@@ -219,15 +221,15 @@ public class QuadraticSieve
         exponents.add(new Pair<ArrayList<Long>, Integer>(exponent, i));
         }
        
-      System.out.print("[");
-      if(exponents.size() > 0)
+      //System.out.print("[");
+      /* if(exponents.size() > 0)
       {
         for(long whatever : exponents.get(exponents.size() -1).getX())
         {
-          System.out.print(whatever +", ");
+          //System.out.print(whatever +", ");
         }
-        System.out.println("]");
-      }
+        //System.out.println("]");
+      } */
     }
 
 
@@ -238,18 +240,18 @@ public class QuadraticSieve
     ArrayList<Pair<ArrayList<Integer>, Integer>> modTwo = new ArrayList<Pair<ArrayList<Integer>, Integer>>();
     for(int i = 0; i < matrix.size(); i++)
     {
-      System.out.print("Row: " + i + "\t[");  
+      //System.out.print("Row: " + i + "\t[");  
       
       for(int j = 0; j < matrix.get(i).getX().size(); j++)
       {
-        System.out.print(matrix.get(i).getX().get(j) + ", ");
+        //System.out.print(matrix.get(i).getX().get(j) + ", ");
         matrix.get(i).getX().set(j, matrix.get(i).getX().get(j) % 2);
   
       }
-      System.out.print("]\nReduced\t[");
-      for(long temp : matrix.get(i).getX())
-        System.out.print(temp + ", ");
-      System.out.println("]");
+      //System.out.print("]\nReduced\t[");
+      //for(long temp : matrix.get(i).getX())
+        //System.out.print(temp + ", ");
+      //System.out.println("]");
      }
      for(Pair<ArrayList<Long>, Integer> pair : matrix)
      {
@@ -343,7 +345,7 @@ public class QuadraticSieve
   */
   public static HashSet<Long> rebuildEquation(ArrayList<ArrayList<Integer>> gaussHits, long bigN)
   {
-    int R = (int)(Math.sqrt(bigN));
+    int R = ((int)(Math.sqrt(bigN))) / REDUCERANGE;
     HashSet<Long> factors = new HashSet<Long>();
     for(ArrayList<Integer> hit : gaussHits)
     {
@@ -360,13 +362,13 @@ public class QuadraticSieve
         continue;
       long factor1 = (gcd(bigN, (x+y)));
       long factor2 = (gcd(bigN, (x-y)));
-      //System.out.print("Hit\t[");
+      ////System.out.print("Hit\t[");
       //for(long number : hit)
-      //  System.out.print(number + ", "); 
-      System.out.println("]\n LHS: " + lhs + ".\t RHS: " + rhs);
-      System.out.println("X: " + x + "\tY: " + y);
-      System.out.println("gcd(" + bigN +", " + (x+y) +": " + factor1 +
-                         "\ngcd(" + bigN + ", " + (x-y) + ": " + factor2);
+      //  //System.out.print(number + ", "); 
+      //System.out.println("]\n LHS: " + lhs + ".\t RHS: " + rhs);
+      //System.out.println("X: " + x + "\tY: " + y);
+      //System.out.println("gcd(" + bigN +", " + (x+y) +": " + factor1 +
+                        //"\ngcd(" + bigN + ", " + (x-y) + ": " + factor2);
       
       factors.add(Math.abs(factor1));
       factors.add(Math.abs(factor2));
