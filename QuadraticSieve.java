@@ -148,8 +148,9 @@ public class QuadraticSieve
   }
   
   /**
-  *This method will calculate the residuals 
-  *by: ...
+  *This method will determine which numbers are smooth by repeatedly dividing by primes
+  *in the factor base to obtain residuals of each number. 
+  *
   *@param smoothlist An ArrayList of smooth 
   *@return 	An ArrayList of longs representing the newly calculated residuals
   */
@@ -200,8 +201,8 @@ public class QuadraticSieve
   }
 
   /**
-  *This method will refactor the array using
-  *prime factorization 
+  *This method will create a matrix of the prime factorization of numbers that are smooth over the factorbase.
+  *It stores the exponents of each prime factor of each number.
   *
   *@param Residues	An ArrayList of reisdues calculated from
   *			calcResidues
@@ -259,6 +260,11 @@ public class QuadraticSieve
 
     return exponents;
   }
+
+  *This method reduces the prime factorization matrix mod 2 (so the matrix only stores the parity of the exponents).
+  *
+  *
+  */
   public static ArrayList<Pair<ArrayList<Integer>, Integer>> reduceModTwo(ArrayList<Pair<ArrayList<Long>, Integer>> matrix)
   {
     ArrayList<Pair<ArrayList<Integer>, Integer>> modTwo = new ArrayList<Pair<ArrayList<Integer>, Integer>>();
@@ -288,7 +294,10 @@ public class QuadraticSieve
   }
 
   
-  
+  *This method uses Gaussian elimination to return a list of row combinations that sum to zero. These represent
+  *products that are square and can be used to rebuild the equation x^2 = y^2.
+  *
+  */
   public static ArrayList<ArrayList<Integer>> gauss(ArrayList<Pair<ArrayList<Integer>,Integer>> array)
   {
     ArrayList<Pair<ArrayList<Integer>, ArrayList<Integer>>> reducedMatrix = new ArrayList<Pair<ArrayList<Integer>, ArrayList<Integer>>>();
@@ -408,6 +417,10 @@ public class QuadraticSieve
     return factors;
   }
   
+  *This method divides all factors by other factors to ensure that all prime factors are listed in
+  *the output.
+  *
+  */
   public static HashSet<Long> completeFactors(HashSet<Long> factors) 
   {
     HashSet<Long> newFactors = new HashSet<Long>();
