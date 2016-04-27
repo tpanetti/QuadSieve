@@ -14,7 +14,7 @@ public class QuadraticSieve
   //This is a private class
   //to be used as a touple for
   //saving an ArrayList and it's integer index
-  private static final int REDUCERANGE = 16;
+  private static final int REDUCERANGE = 8;
   private static class Pair<X, Y> 
   {
     private final X x;
@@ -49,7 +49,6 @@ public class QuadraticSieve
 	  System.out.println("Enter a factorbase: ");
       factorbase = input.nextLong();
     }
-    
     //Find R
     long R = (long)Math.sqrt(n);
 
@@ -90,8 +89,8 @@ public class QuadraticSieve
   }
   
   /**
-  * This method will perform a Sieve to calculate all primes
-  * under the input 
+  * This method will perform an eratostheness Sieve to calculate all primes
+  * under the input factobase
   *
   * @param size This is the size to create the array of primes
   * @return 	An ArrayList of primes under size 
@@ -123,6 +122,12 @@ public class QuadraticSieve
     return primes;
   }
   
+  /**
+  *
+  *@param numToFactor 	the input number we are factoring
+  *@param range	the range at which to create the matrix from -range to range
+  *@return 	An ArrayList of longs representing the smooth values found
+  */
   public static ArrayList<Long> findSmoothness(long range, long numToFactor)
   {
     //Offset = R. Change later
