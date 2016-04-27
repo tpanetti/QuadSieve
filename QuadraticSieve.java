@@ -123,6 +123,8 @@ public class QuadraticSieve
   }
   
   /**
+  *This method will find the smooth numbers between the range
+  *specified
   *
   *@param numToFactor 	the input number we are factoring
   *@param range	the range at which to create the matrix from -range to range
@@ -145,6 +147,12 @@ public class QuadraticSieve
   return Qs;
   }
   
+  /**
+  *This method will calculate the residuals 
+  *by: ...
+  *@param smoothlist An ArrayList of smooth 
+  *@return 	An ArrayList of longs representing the newly calculated residuals
+  */
   public static ArrayList<Long> calcResiduals(ArrayList<Integer> primes, ArrayList<Long> smoothlist)
   {
     //ArrayList<Pair<Integer, Integer>> residuals = new ArrayList<Pair<Integer,Integer>>();
@@ -191,7 +199,18 @@ public class QuadraticSieve
   
   }
 
-
+  /**
+  *This method will refactor the array using
+  *prime factorization 
+  *
+  *@param Residues	An ArrayList of reisdues calculated from
+  *			calcResidues
+  *@param original	the original ArrayList of the smooth numbers
+  *@param primes 	the list of primes up to the factorbase	
+  *@return 	an ArrayList of pairs containing the rows and their 
+  *		corresponding integer index in case the rows get
+  *		rearranged later
+  */
   public static ArrayList<Pair<ArrayList<Long>,Integer>> refactor(ArrayList<Long> residues, ArrayList<Long> original,
 							ArrayList<Integer> primes)
   {
