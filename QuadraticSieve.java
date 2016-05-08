@@ -11,10 +11,14 @@ import java.util.HashSet;
  
 public class QuadraticSieve
 {
+  //This is the range the matrix runs on.
+  //50,000 works great because it works for all numbers 
+  //in the range of long without being too large
+  private static final long SIEVERANGE = 50000;
   //This is a private class
   //to be used as a touple for
   //saving an ArrayList and it's integer index
-  private static final int REDUCERANGE = 8;
+  //and some other things
   private static class Pair<X, Y> 
   {
     private final X x;
@@ -33,9 +37,17 @@ public class QuadraticSieve
   {
     //Grab number N to be factored
     long n;
+	//Grab the factor base
     long factorbase;
     //take from command line
-    if(args.length == 2)
+	
+	//if no factobase is given, assume 1000
+	if(args.length == 1)
+	{
+		n = Long.parseLong(args[0]);
+		factorbase = 1000;
+	}
+    else if(args.length == 2)
     {
       n = Long.parseLong(args[0]);
       factorbase = Long.parseLong(args[1]);
@@ -57,13 +69,15 @@ public class QuadraticSieve
            //for(int i = 0; i < primes.size(); i++)
             //System.out.println(primes.get(i) + " "); 
     //generate a list that satisfies the eqn 
-    ArrayList<Long> bSmooth = findSmoothness(R/REDUCERANGE, n);
+    ArrayList<Long> bSmooth = findSmoothness(n);
     ArrayList<Long> residues = calcResiduals(primes, bSmooth);
   
     //Refactor and Gauss
-    ArrayList<Pair<ArrayList<Long>, Integer>> refactoredResidual = refactor(residues, bSmooth, primes);
+    ArrayList<Pair<ArrayList<Long>, Integer>> refactoredResidual 
+	= refactor(residues, bSmooth, primes);
     //reduce the matrix mod 2
-    ArrayList<Pair<ArrayList<Integer>, Integer>> reducedResidual = reduceModTwo(refactoredResidual);
+    ArrayList<Pair<ArrayList<Integer>, Integer>> reducedResidual
+	= reduceModTwo(refactoredResidual);
     
     //print reduced residual matrix
     //System.out.println("Reduced matrix is: ");
@@ -85,6 +99,7 @@ public class QuadraticSieve
     System.out.print("The factors are: " );   
     for(long factor : factors)
       System.out.print(factor + ", ");
+    System.out.println();
     
   }
   
@@ -127,15 +142,15 @@ public class QuadraticSieve
   *specified
   *
   *@param numToFactor 	the input number we are factoring
-  *@param range	the range at which to create the matrix from -range to range
   *@return 	An ArrayList of longs representing the smooth values found
   */
-  public static ArrayList<Long> findSmoothness(long range, long numToFactor)
+  public static ArrayList<Long> findSmoothness(long numToFactor)
   {
     //Offset = R. Change later
     ArrayList<Long> Qs = new ArrayList<Long>();
-    //System.out.println("Root is " + Math.sqrt(numToFactor) + "\tindex\t" + "(r+n)^2\t" + "(r+n)^2 - N)");
-    for(long i = -range; i <= range; i++) 
+    //System.out.println("Root is " + Math.sqrt(numToFactor) 
+					//+ "\tindex\t" + "(r+n)^2\t" + "(r+n)^2 - N)");
+    for(long i = -SIEVERANGE; i <= SIEVERANGE; i++) 
     {
       //store log of Q possibly
       long Q = ((long)(Math.pow((Math.sqrt(numToFactor) + i), 2)));
@@ -148,15 +163,17 @@ public class QuadraticSieve
   }
   
   /**
-  *This method will determine which numbers are smooth by repeatedly dividing by primes
-  *in the factor base to obtain residuals of each number. 
+  *This method will determine which numbers are smooth by repeatedly dividing
+  *by primes in the factor base to obtain residuals of each number. 
   *
   *@param smoothlist An ArrayList of smooth 
   *@return 	An ArrayList of longs representing the newly calculated residuals
   */
-  public static ArrayList<Long> calcResiduals(ArrayList<Integer> primes, ArrayList<Long> smoothlist)
+  public static ArrayList<Long> calcResiduals(ArrayList<Integer> primes,
+											  ArrayList<Long> smoothlist)
   {
-    //ArrayList<Pair<Integer, Integer>> residuals = new ArrayList<Pair<Integer,Integer>>();
+    //ArrayList<Pair<Integer, Integer>> residuals 
+	//= new ArrayList<Pair<Integer,Integer>>();
 
     ArrayList<Long> copy = new ArrayList<Long>();
     for(long i : smoothlist)
@@ -177,8 +194,11 @@ public class QuadraticSieve
             long temp = copy.get(j);
             while(temp != 0 && temp % i == 0)
             {
-              //System.out.println("Temp: " + temp + "\ti: " + i + "temp % i = " + (temp%i));
-              //System.out.println("Divide\t" + i + "\t " + (j-(smoothlist.size()/2)) + "\t " + temp + "\t" + (temp / i));
+              //System.out.println("Temp: " + temp + "\ti: " + i 
+								   //+ "temp % i = " + (temp%i));
+              //System.out.println("Divide\t" + i + "\t "
+								   //+(j-(smoothlist.size()/2)) + "\t " 
+								   //+ temp + "\t" + (temp / i));
               temp = temp / i;
             }
             copy.set(j, temp);
@@ -201,7 +221,8 @@ public class QuadraticSieve
   }
 
   /**
-  *This method will create a matrix of the prime factorization of numbers that are smooth over the factorbase.
+  *This method will create a matrix of the prime factorization of numbers
+  *that are smooth over the factorbase.
   *It stores the exponents of each prime factor of each number.
   *
   *@param Residues	An ArrayList of reisdues calculated from
@@ -212,11 +233,13 @@ public class QuadraticSieve
   *		corresponding integer index in case the rows get
   *		rearranged later
   */
-  public static ArrayList<Pair<ArrayList<Long>,Integer>> refactor(ArrayList<Long> residues, ArrayList<Long> original,
-							ArrayList<Integer> primes)
+  public static ArrayList<Pair<ArrayList<Long>,Integer>> 
+				refactor(ArrayList<Long> residues, ArrayList<Long> original,
+						 ArrayList<Integer> primes)
   {
     //initialize arraylist and fill with zero arryalists
-    ArrayList<Pair<ArrayList<Long>, Integer>> exponents = new ArrayList<Pair<ArrayList<Long>, Integer>>();
+    ArrayList<Pair<ArrayList<Long>, Integer>> exponents 
+	= new ArrayList<Pair<ArrayList<Long>, Integer>>();
     //cheating
     long zero = 0;
     for(int i = 0; i < residues.size(); i++)
@@ -226,25 +249,26 @@ public class QuadraticSieve
         ArrayList<Long> exponent = new ArrayList<Long>();
         for(int index = 0; index < primes.size(); index++)
           exponent.add(zero);
-	//System.out.println("Smooth\t" + (i - (original.size()/2)) + "\t" + i + "\t" + original.get(i));
+		//System.out.println("Smooth\t" + (i - (original.size()/2)) 
+						    //+ "\t" + i + "\t" + original.get(i));
         long temp = original.get(i);
-	if(temp < 0)
-	{
-	  temp = temp * -1;
-	  exponent.set(0,new Long(1));
-	}
-        for(int pIndex = 1; pIndex < primes.size(); pIndex++) //pIndex set to 1 to skip the "prime" -1 
+	    if(temp < 0)
+	    {
+	      temp = temp * -1;
+	      exponent.set(0,new Long(1));
+	    }   //pIndex set to 1 to skip the "prime" -1 
+        for(int pIndex = 1; pIndex < primes.size(); pIndex++) 
         {
           while(temp % primes.get(pIndex) == 0)
-	        {
-	          //System.out.println("DIVIDE\t" + pIndex +"\t" + primes.get(pIndex) + "\t" + temp);
-	          temp = temp / primes.get(pIndex);
-	          exponent.set(pIndex, (exponent.get(pIndex))+1);
-	        }
+	      {
+	        //System.out.println("DIVIDE\t" + pIndex +"\t" + primes.get(pIndex) + "\t" + temp);
+	        temp = temp / primes.get(pIndex);
+	        exponent.set(pIndex, (exponent.get(pIndex))+1);
+	      }
 	
-	      }     
+	    }     
         exponents.add(new Pair<ArrayList<Long>, Integer>(exponent, i));
-        }
+      }
        
       //System.out.print("[");
       /* if(exponents.size() > 0)
@@ -261,13 +285,20 @@ public class QuadraticSieve
     return exponents;
   }
 
-  *This method reduces the prime factorization matrix mod 2 (so the matrix only stores the parity of the exponents).
+  /**
+  *This method reduces the prime factorization matrix mod 2 
+  * (so the matrix only stores the parity of the exponents).
   *
-  *
+  *@param 	An ArrayList of Pairs representing the matrix and the indices
+  *@return 	An ArrayList of Pairs of ArrayLists and their corresponding
+  * 		indices (in case of the loss of the index from reduction
   */
-  public static ArrayList<Pair<ArrayList<Integer>, Integer>> reduceModTwo(ArrayList<Pair<ArrayList<Long>, Integer>> matrix)
+  public static ArrayList<Pair<ArrayList<Integer>, Integer>> reduceModTwo
+											(ArrayList<Pair<ArrayList<Long>,
+											 Integer>> matrix)
   {
-    ArrayList<Pair<ArrayList<Integer>, Integer>> modTwo = new ArrayList<Pair<ArrayList<Integer>, Integer>>();
+    ArrayList<Pair<ArrayList<Integer>, Integer>> modTwo 
+	= new ArrayList<Pair<ArrayList<Integer>, Integer>>();
     for(int i = 0; i < matrix.size(); i++)
     {
       //System.out.print("Row: " + i + "\t[");  
@@ -293,21 +324,29 @@ public class QuadraticSieve
      return modTwo;
   }
 
-  
-  *This method uses Gaussian elimination to return a list of row combinations that sum to zero. These represent
+  /**
+  *This method uses Gaussian elimination to return a list
+  *of row combinations that sum to zero. These represent
   *products that are square and can be used to rebuild the equation x^2 = y^2.
   *
+  *@param array	The array to perform gauss elimination on
+  *@returns 	An ArrayList of ArrayLists representing the row reduction
+  * 			operations performed on the matrix
   */
-  public static ArrayList<ArrayList<Integer>> gauss(ArrayList<Pair<ArrayList<Integer>,Integer>> array)
+  public static ArrayList<ArrayList<Integer>> gauss
+				(ArrayList<Pair<ArrayList<Integer>,Integer>> array)
   {
-    ArrayList<Pair<ArrayList<Integer>, ArrayList<Integer>>> reducedMatrix = new ArrayList<Pair<ArrayList<Integer>, ArrayList<Integer>>>();
+    ArrayList<Pair<ArrayList<Integer>, ArrayList<Integer>>> reducedMatrix 
+	= new ArrayList<Pair<ArrayList<Integer>, ArrayList<Integer>>>();
     //initialize ArrayList
     for(int i = 0; i < array.size(); i++)
     {
       ArrayList<Integer> rowReductions = new ArrayList<Integer>();
       //first value in the index is the original index of said row
       rowReductions.add(array.get(i).getY());
-      reducedMatrix.add(new Pair<ArrayList<Integer>, ArrayList<Integer>>(array.get(i).getX(), rowReductions));
+      reducedMatrix.add(new Pair<ArrayList<Integer>,
+						ArrayList<Integer>>(array.get(i).getX(),
+											rowReductions));
     }
     int j = 0;
     for(int i = 0; i < reducedMatrix.size(); i++)
@@ -327,7 +366,8 @@ public class QuadraticSieve
         //if it's not equal to the size, we did find a 1
         if(oneRow < reducedMatrix.size())
         {  //one found, swap rows
-          Pair<ArrayList<Integer>, ArrayList<Integer>> temp = reducedMatrix.get(i);
+          Pair<ArrayList<Integer>, ArrayList<Integer>> temp 
+		  = reducedMatrix.get(i);
           reducedMatrix.set(i, reducedMatrix.get(oneRow));
           reducedMatrix.set(oneRow, temp);
         }
@@ -373,12 +413,14 @@ public class QuadraticSieve
   /**
   * This method will rebuild the equation x^2 = y^2
   *
-  *
-  *
+  *@param bigN		The number to be factored
+  *@param gaussHits	The matrix of row reduce operations from gauss
+  *@return			A HashSet containing the factors of N
   */
-  public static HashSet<Long> rebuildEquation(ArrayList<ArrayList<Integer>> gaussHits, long bigN)
+  public static HashSet<Long> rebuildEquation
+				(ArrayList<ArrayList<Integer>> gaussHits, long bigN)
   {
-    int R = ((int)(Math.sqrt(bigN))) / REDUCERANGE;
+    long R = ((long)(Math.sqrt(bigN))) / SIEVERANGE;
     HashSet<Long> factors = new HashSet<Long>();
     for(ArrayList<Integer> hit : gaussHits)
     {
@@ -417,9 +459,13 @@ public class QuadraticSieve
     return factors;
   }
   
-  *This method divides all factors by other factors to ensure that all prime factors are listed in
-  *the output.
+  /***
+  *This method divides all factors by other factors to ensure 
+  *that all prime factors are listed in the output.
   *
+  *@param factors	This is the list of factors so far
+  *@return 			A HashSet of all factors factored from the original	
+					factors
   */
   public static HashSet<Long> completeFactors(HashSet<Long> factors) 
   {
@@ -451,7 +497,4 @@ public class QuadraticSieve
     }
     return a;
   }
-
-
-
 }
